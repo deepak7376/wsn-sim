@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import statistics
 import random
-import sm
+import robustbase
 import csv
 
 def dist(x1,y1,x2,y2):
@@ -12,13 +12,13 @@ def dist(x1,y1,x2,y2):
 np.random.seed(0)
 
 #node parameter
-N =10     # total no. of nodes
-n=3    # total faulty nodes in network
-tr=4        # transmission range of each nodes
+N =20     # total no. of nodes
+n=6    # total faulty nodes in network
+tr=5        # transmission range of each nodes
 x1=24.4       # lower threshold
 x2=26.3       # upper threshold
 threshold=30  #
-l1,l2=0,100 # random position at which faulty nodes present
+l1,l2=0,50 # random position at which faulty nodes present
 t=5          #frame length
 
 # (x,y) co-ordinate where the nodes are placed
@@ -46,15 +46,12 @@ for i in range(0,N):
 # frame of every nodes
 frame=np.array([[round(random.uniform(x1,x2),2) for i in range(0,t) ] for j in range(0,N)])
 sensorVal=np.array([0.0 for i in range(0,N) ])
-print(frame[0])
 
-#print(frame)
 # injecting the faults in the nodes
 faulty=random.sample(range(0,N),n)   # index of the faulty nodes
-print(faulty)
 f_val=[100.0,-987,3454,-232,2000]
 secure_random = random.SystemRandom()
-for i in frame:
+for i in faulty:
     frame[i]=np.array([secure_random.choice(f_val) for j  in range(0,t)])
 
 
@@ -62,64 +59,46 @@ for i in frame:
 for j in range(0,N):
     sensorVal[j]=frame[j][t-1]
 
-print(sensorVal[0])
+print(sensorVal)
 
 # Detection accuracy parameter
 fault_count_mad=0
 da_mad=0
-fault_count_sd=0
-da_sd=0
-fault_count_iqr=0
-da_iqr=0
-fault_count_sn=0
-da_sn=0
-fault_count_qn=0
-da_qn=0
+
 f_mad=[]
-f_qn=[]
-f_sn=[]
-f_iqr=[]
-f_sd=[]
+
 
 #Distributed Self Fault Diagnosis Algorithm
 for i in range(0,N):
     node_id=[]
     data=[]
-    for j in range(0,t):
-        if frame[i][j]>threshold or frame[i][j]<0:    # check if frame value above threshold
-            count=count+1
-    if count==t:                # when all the frame data grater than threshold
-        for j in range(0, N):
-            if neigh_node_of_i[i][j] == 1 and i!=j:
-                node_id.append(j)
-                data.append(sensorVal[j])
+    status = []
+    no_of_ones=0
+    for j in range(0, N):
+        if ((neigh_node_of_i[i][j] == 1) & i!=j):
+            node_id.append(j)
+            data.append(sensorVal[j])
 
-        if len(data) > 1:
+    median = statistics.median(data)
 
-            median = statistics.median(data)
+    qn = robustbase.Qn(data)
 
-            nmad = sm.nmad(data)
-            Qn = sm.qn(data)
-            Sn = sm.sn(data)
+    print(frame[i])
+    for k in frame[i]:
+        if abs(k - median) / qn > 3:
+            status.append(1)
+            no_of_ones=no_of_ones+1
+        else:
+            status.append(0)
+    print(status)
+    print(no_of_ones)
+    if no_of_ones==t:
+        if i in faulty:
+            da_mad=da_mad+1
+        f_mad.append(i)
+        fault_count_mad = fault_count_mad + 1
 
-            if abs(sensor_val[i] - median) / nmad > 3:
 
-                if i in faulty:
-                    da_mad = da_mad + 1
-                f_mad.append(i)
-                fault_count_mad = fault_count_mad + 1
-
-            if abs(sensor_val[i] - median) / Qn > 3:
-                if i in faulty:
-                    da_qn = da_qn + 1
-                fault_count_qn = fault_count_qn + 1
-                f_qn.append(i)
-
-            if abs(sensor_val[i] - median) / Sn > 3:
-                if i in faulty:
-                    da_sn = da_sn + 1
-                fault_count_sn = fault_count_sn + 1
-                f_sn.append(i)
 
 
 print("-------------------------MAD---------------------------")
@@ -129,24 +108,10 @@ print("faulty nodes=",n)
 #print("fault_detected=",fault_count_mad)
 print("DA=",da_mad/n)
 
-print("---------------------------QN---------------------------")
-
-#print("faulty injected nodes=",faulty)
-#print("faulty nodes=",n)
-#print("faulty nodes=",f_qn)
-#print("fault_detected=",fault_count_qn)
-print("DA=",da_qn/n)
-
-print("--------------------------Sn-------------------------------")
-#print("faulty injected nodes=",faulty)
-#print("faulty nodes=",n)
-#print("faulty nodes=",f_sn)
-#print("fault_detected=",fault_count_sn)
-print("DA=",da_sn/n)
 
 
-row = [n,da_mad/n,da_qn/n,da_sn/n]
-with open('final_algorithm_25.csv', 'a') as csvFile:
+row = [n,da_mad/n]
+with open('test.csv', 'a') as csvFile:
     writer = csv.writer(csvFile)
     writer.writerow(row)
 csvFile.close()
