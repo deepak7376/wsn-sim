@@ -26,12 +26,13 @@ def Sn(data):
         return None
     elif len(data)==1:
         return 0
-    diff = []
+    med=[]
     for i in data:
+        diff=[]
         for j in data:
             diff.append(abs(i-j))
-
-    return(1.1926*(statistics.median(diff)))
+        med.append(statistics.median(diff))
+    return(1.1926*(statistics.median(med)))
 
 # Standard deviation, non-robust method
 def sd(data):
@@ -73,3 +74,18 @@ def Qn(data):
     return 2.2219*diff[k-1]
 
 
+
+
+status=[]
+data=[24,24.8,24.6,24.4,24.5]
+ng=[25,25.4,25.1,25.8]
+med=statistics.median(ng)
+threeqn=3*Qn(ng)
+print(threeqn)
+for x in data:
+    if abs((x-med)/threeqn)<3:
+        status.append(0)
+    else:
+        status.append(1)
+
+print(status)

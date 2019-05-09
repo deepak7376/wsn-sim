@@ -173,10 +173,10 @@ csvFile.close()
 #print(sensor_val)
 #print(neigh_node_of_i)
 # for plotting the node diagram
-#fig, ax = plt.subplots()
-#ax.scatter(x, y)
+fig, ax = plt.subplots()
+ax.scatter(x, y)
 
-#for i, txt in enumerate([z for z in range(0,N)]):
-#    plt.annotate(txt, (x[i], y[i]))
+for i, txt in enumerate([z for z in range(0,N)]):
+    plt.annotate(txt, (x[i], y[i]))
 
-#plt.show()
+plt.show()

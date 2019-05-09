@@ -12,13 +12,13 @@ np.random.seed(0)
 #node parameter
 N =1000     # total no. of nodes
 n=50    # total faulty nodes in network
-tr=74        # transmission range of each nodes
+tr=250        # transmission range of each nodes
 x1=24.4       # lower threshold
 x2=26.3       # upper threshold
 l1,l2=0,1000 # random position at which faulty nodes present
-a1=50*pow(10,-9)
-a2=10*pow(10,-12)
-a3=50*pow(10,-9)
+b=45*pow(10,-9)
+a2=0.001*pow(10,-12)
+a1=45*pow(10,-9)
 TEC=0
 
 sensor_val=np.array([round(random.uniform(x1,x2),2) for i in range(0,N) ])
@@ -54,10 +54,10 @@ for i in faulty:
 
 Energy=[]
 
-for i in range(0,N):
+for i in [5]:
     Ei=0
-    Etx=sensor_val[i]*(a1+a2*pow(tr,2))
-    Erx=-abs(sensor_val[i])*a3  # it substract the itself data
+    Etx=32*(a1+a2*pow(56,4))
+    Erx=-abs(32)*b  # it substract the itself data
     node_id = []
     data = []
     #amd = []
@@ -66,26 +66,29 @@ for i in range(0,N):
             node_id.append(j)
             data.append(sensor_val[j])
 
-            Erx=Erx+abs(sensor_val[j])*a3
+            Erx=Erx+abs(32)*b
     Ei=Etx+Erx
     Energy.append(Ei)
     # print("node no=",i)
     # print("node id=",node_id)
     #print("data=",data)
-
+print("no. of neighbour:")
+print(len(node_id))
+print(len(data))
+print("total energy:")
 TEC=sum(Energy)
 print(TEC)
 
 # for writing in csv file
-row = [tr,TEC]
-with open('exp4_TEC.csv', 'a') as csvFile:
+row = [len(node_id),TEC]
+with open('TEC_new.csv', 'a') as csvFile:
     writer = csv.writer(csvFile)
     writer.writerow(row)
 csvFile.close()
-'''
+'''''
 #print(sensor_val)
 #print(neigh_node_of_i)
-# for plotting the node diagram'''
+# for plotting the node diagram
 fig, ax = plt.subplots()
 ax.scatter(x, y,color='g')
 for i in faulty:
@@ -95,3 +98,4 @@ for i in faulty:
 #    plt.annotate(txt, (x[i], y[i]))
 
 plt.show()
+'''
