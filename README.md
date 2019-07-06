@@ -1,4 +1,4 @@
-# wsnFault
+# Statistical Method Based Fault Detection Algorithm for Wireless Sensor Networks (WSNs).
 This project is based on fault detection in WSNs using statistical methods.
 There are five experiment is performed 
 1. Detection Accuracy
