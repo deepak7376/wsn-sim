@@ -76,16 +76,4 @@ def Qn(data):
 
 
 
-status=[]
-data=[24,24.8,24.6,24.4,24.5]
-ng=[25,25.4,25.1,25.8]
-med=statistics.median(ng)
-threeqn=3*Qn(ng)
-print(threeqn)
-for x in data:
-    if abs((x-med)/threeqn)<3:
-        status.append(0)
-    else:
-        status.append(1)
 
-print(status)

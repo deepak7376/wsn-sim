@@ -166,17 +166,15 @@ with open('exp2_new_74.csv', 'a') as csvFile:
     writer.writerow(row)
 csvFile.close()
 
-#print(sensor_val)
-#print(neigh_node_of_i)
+
 # for plotting the node diagram
-'''
+
 fig, ax = plt.subplots()
 ax.scatter(x, y,color='g')
 for i in faulty:
     ax.scatter(x[i], y[i],color='r')
 
-#for i, txt in enumerate([z for z in range(0,N)]):
-#    plt.annotate(txt, (x[i], y[i]))
+for i, txt in enumerate([z for z in range(0,N)]):
+    plt.annotate(txt, (x[i], y[i]))
 
 plt.show()
-'''

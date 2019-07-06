@@ -1,5 +1,3 @@
-import statistics
-import math
 import numpy as np
 import random
 import timeit
