@@ -170,8 +170,7 @@ with open('exp1_new_56.csv', 'a') as csvFile:
     writer.writerow(row)
 csvFile.close()
 
-#print(sensor_val)
-#print(neigh_node_of_i)
+
 # for plotting the node diagram
 fig, ax = plt.subplots()
 ax.scatter(x, y)
