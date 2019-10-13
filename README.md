@@ -20,5 +20,3 @@ All the reading associated with experiment are store in CSV file.
 
 Q. How this algorithm work ?
 A. There are five statistical methods are used Median Absolute Deviation (MAD), Qn scale estimator, Sn scale estimator, IQR and Standard deviation.
-
-For more details read the mainThesis.pdf file in the repository.
