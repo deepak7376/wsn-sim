@@ -1,0 +1,18 @@
+# Total number of nodes in the WSN 
+NO_OF_NODES: 1000
+
+# 
+NO_OF_FAULTY_NODES: 25
+
+# Nodes are placed between (0, 0) --> (X_MAX, Y_MAX)
+X_MAX: 500 
+Y_MAX: 500 
+
+# Transmission range of node are (20 meter)
+TX_RANGE_OF_NODE: 20
+
+# Protocol for sending data to the gateway or sink node.
+ROUTING_PROTOCOL: None
+
+# Initial power of the node
+INITIAL_POWER: 10
