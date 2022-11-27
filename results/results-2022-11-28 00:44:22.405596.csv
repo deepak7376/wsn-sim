@@ -1,0 +1,2 @@
+Date/Time,Stat. Method,Total Nodes,Total Faulty Nodes,Node Avg. Value Range,Faulty Value Range,Detection Acc.,False Alaram Rate,False Positive Rate,Avg. Stat Cal. Time,Energy
+2022-11-28 00:44:22.405596,MAD,100,25,"(23.5, 25.3)",25,25,"(53.2, 80.2)",0.56,0.06666666666666667,0.0,2.0766258239746096e-06,0
