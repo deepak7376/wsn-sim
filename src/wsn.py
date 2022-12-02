@@ -35,9 +35,6 @@ class WSN:
         # Add node attributes
         for i, nlrow in nodelist.iterrows():
             self.g.add_node(nlrow['id'] , attr_dict=nlrow[1:].to_dict())
-        # print(self.g.nodes.data())
-        # print(self.g.number_of_nodes())
-        # print(self.g.number_of_edges())
 
     def _save_dataframe(self, df, file_name, path="resources"):
         df.to_csv(os.path.join(path, file_name), encoding='utf-8', index=False)
@@ -75,24 +72,23 @@ class WSN:
         # Define node positions data structure (dict) for plotting
         node_positions = {node[0]: (node[1]['attr_dict']['X'], node[1]['attr_dict']['Y']) for node in self.g.nodes(data=True)}
 
-        # Preview of node_positions with a bit of hack (there is no head/slice method for dictionaries).
-        print(dict(list(node_positions.items())[0:5]))
+        # # Preview of node_positions with a bit of hack (there is no head/slice method for dictionaries).
+        # print(dict(list(node_positions.items())[0:5]))
 
         # Define data structure (list) of edge colors for plotting
         edge_colors = [e[2]['attr_dict']['color'] for e in self.g.edges(data=True)]
 
-        # Preview first 10
-        print(edge_colors[0:10])
+        # # Preview first 10
+        # print(edge_colors[0:10])
 
         plt.figure(figsize=(8, 6))
         nx.draw(self.g, pos=node_positions, edge_color=edge_colors, node_size=10, node_color='black')
-        plt.savefig("resources/path.png")
+        plt.savefig("resources/wsn.png")
         plt.title('Graph Representation of Sleeping Giant Trail Map', size=15)
         # plt.show()
 
 if __name__=="__main__":
     from src.config import Config
-
     c = Config("config.yaml")
     w = WSN(c)
     w._create_nodelist_from_config()
