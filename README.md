@@ -1,4 +1,4 @@
-# Statistical Method Based Algorithm for Fault Detection in Wireless Sensor Networks (WSNs)
+# PyWSNSim | Python simulation toolkit for Wireless Sensor Networks.
 > Using distributed self-fault diagnosis (DSFD) method, faults in wireless sensor networks (WSNs) can be
 easily detected. In this method, each sensor node collects its neighbourhood sensor node data
 and uses the statistical-based method for detecting its own fault status. Discussed various statistical-based method such as standard deviation, interquartile range, median
