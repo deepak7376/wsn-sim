@@ -1,57 +1,90 @@
-# PyWSNSim | Python simulation toolkit for Wireless Sensor Networks.
-> Using distributed self-fault diagnosis (DSFD) method, faults in wireless sensor networks (WSNs) can be
-easily detected. In this method, each sensor node collects its neighbourhood sensor node data
-and uses the statistical-based method for detecting its own fault status. Discussed various statistical-based method such as standard deviation, interquartile range, median
-absolute deviation (MAD), Sn and Qn scale estimator for detection of the fault in WSNs. The
-result of the experiment shows that standard deviation and interquartile range fails to detect the
-fault, if multiple nodes are faulty, while MAD, Sn and Qn scale estimator detects the fault even
-20-30% of the nodes are faulty.
+# WSN-Simulator (WSN-Sim)
+
+**WSN-Sim** is a Python-based Wireless Sensor Network (WSN) simulator supporting AODV and DSR protocols.
 
 ## Installation
 
-OS X , Windows & Linux:
+To install the package, run the following command:
 
-* Clone the repository
-* Install dependencies
-   * pip3 install -r requirements.txt
-
-## Usage example
-
-modify the ```config.yaml``` file with your testing parameters then run ```python main.py```. 
-Go to resources folder to see the different file for more analysis. currently four different statistical method is supported. this repo is under development, you may see many updates in future. 
-
-```python
-from src.config import Config
-from src.dsfd import DSFD
-
-def main():
-    config = Config("config.yaml")
-    dsfd = DSFD(config)
-    print(dsfd.run())
-
-if __name__ == "__main__":
-    main()
+```bash
+pip install wsn-sim
 ```
 
-## Result Comparison with different Statistical Method
+## Usage
 
-|Date/Time                 |Method|Total Nodes|Total Faulty Nodes|Node Avg. Value Range|Faulty Value Range|Detection Acc.|False Alaram Rate|False Positive Rate|Avg. Stat Cal. Time|Energy|
-|--------------------------|------|-----------|------------------|---------------------|------------------|--------------|-----------------|-------------------|-------------------|------|
-|2022-12-05 21:28:10.513992|SD    |1000       |90                |(23.5, 25.3)         |(53.2, 80.2)      |0.93          |0.97             |0.57               |0.0                |0     |
-|2022-12-05 21:31:08.852516|QN    |1000       |90                |(23.5, 25.3)         |(53.2, 80.2)      |0.9           |0.89             |0.97               |0.0                |0     |
-|2022-12-05 21:32:06.578734|SN    |1000       |90                |(23.5, 25.3)         |(53.2, 80.2)      |0.83          |0.83             |0.89               |0.0                |0     |
-|2022-12-05 21:35:27.070568|MAD   |1000       |90                |(23.5, 25.3)         |(53.2, 80.2)      |0.88          |0.88             |0.88               |0.0                |0     |
+You can use the simulator by specifying options directly via the command line:
 
+```bash
+wsn-sim --protocol AODV --steps 10 --nodes 20 --links 30
+```
 
-## For Detailed Information
+Alternatively, you can define these parameters in a `.cfg` file and provide the file path:
 
-Read the paper. [Read More.](https://github.com/deepak7376/wsnFault/blob/master/assets/finalConferancePaper.pdf)
+```ini
+# config.cfg
 
+[simulation]
+protocol = AODV
+steps = 10
+nodes = 20
+links = 30
+```
+
+Then run:
+
+```bash
+wsn-sim --config config.cfg
+```
+
+## Options
+
+- `--config`: Path to the configuration file
+- `--protocol`: Choose the routing protocol (AODV/DSR)
+- `--steps`: Number of simulation steps
+- `--nodes`: Number of nodes in the network
+- `--links`: Number of random links between nodes
+
+## Running Tests
+
+To run the tests, use the following command:
+
+```bash
+python -m unittest discover tests
+```
+
+## Example
+
+Here is an example of how to use the simulator:
+
+1. Define your simulation parameters in a `.cfg` file:
+
+    ```ini
+    # simulation_config.cfg
+    [simulation]
+    protocol = DSR
+    steps = 15
+    nodes = 25
+    links = 50
+    ```
+
+2. Run the simulation using the configuration file:
+
+    ```bash
+    wsn-sim --config simulation_config.cfg
+    ```
+
+3. Alternatively, run the simulation with parameters directly from the command line:
+
+    ```bash
+    wsn-sim --protocol DSR --steps 15 --nodes 25 --links 50
+    ```
+
+## License
+
+This project is licensed under the MIT License.
 
 ## Contributing
 
-1. Fork it (<https://github.com/deepak7376/wsnFault/fork>)
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+If you would like to contribute to this project, please fork the repository and submit a pull request. We welcome all improvements, including bug fixes, new features, and documentation enhancements.
+
+---
