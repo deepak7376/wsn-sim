@@ -1,0 +1,8 @@
+{
+    "protocol": "AODV",
+    "steps": 10,
+    "nodes": 20,
+    "links": 30,
+    "topology": "grid",
+    "output": "graph_visualization.png"
+}
