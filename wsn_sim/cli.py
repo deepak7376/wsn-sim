@@ -1,49 +1,49 @@
-# wsn_sim/cli.py
+# wsn_simulator/cli.py
+
 import click
+import configparser
 from wsn_sim.network import Network
 from wsn_sim.node import Node
-import random
-import configparser
 
-def read_config(config_file):
+def read_config(file_path):
     config = configparser.ConfigParser()
-    config.read(config_file)
-    return config
+    config.read(file_path)
+    simulation_config = {
+        'protocol': config.get('simulation', 'protocol'),
+        'steps': config.getint('simulation', 'steps'),
+        'nodes': config.getint('simulation', 'nodes'),
+        'links': config.getint('simulation', 'links'),
+        'topology': config.get('simulation', 'topology')
+    }
+    return simulation_config
 
 @click.command()
-@click.option('--config', type=click.Path(exists=True), help='Path to the configuration file')
-@click.option('--protocol', type=click.Choice(['AODV', 'DSR']), help='Choose the routing protocol (AODV/DSR)')
-@click.option('--steps', type=int, help='Number of simulation steps')
-@click.option('--nodes', type=int, help='Number of nodes in the network')
-@click.option('--links', type=int, help='Number of random links between nodes')
-def run_simulation(config, protocol, steps, nodes, links):
+@click.option('--config', type=click.Path(), help='Path to the configuration file')
+@click.option('--protocol', type=str, default='AODV', help='Routing protocol (AODV/DSR)')
+@click.option('--steps', type=int, default=10, help='Number of simulation steps')
+@click.option('--nodes', type=int, default=20, help='Number of nodes in the network')
+@click.option('--links', type=int, default=30, help='Number of random links between nodes')
+@click.option('--topology', type=str, default='random', help='Network topology (grid/random/cluster)')
+def run_simulation(config, protocol, steps, nodes, links, topology):
     if config:
-        cfg = read_config(config)
-        protocol = cfg.get('simulation', 'protocol', fallback='AODV')
-        steps = cfg.getint('simulation', 'steps', fallback=10)
-        nodes = cfg.getint('simulation', 'nodes', fallback=20)
-        links = cfg.getint('simulation', 'links', fallback=30)
-    else:
-        protocol = protocol or 'AODV'
-        steps = steps or 10
-        nodes = nodes or 20
-        links = links or 30
-
+        config_values = read_config(config)
+        protocol = config_values['protocol']
+        steps = config_values['steps']
+        nodes = config_values['nodes']
+        links = config_values['links']
+        topology = config_values['topology']
+    
     net = Network()
-    base_station = Node(0, (50, 50), role='base_station', protocol=protocol)
+    net.generate_topology(topology, nodes, links)
+    
+    base_station = Node(0, (50, 50), role='base_station')
     net.add_node(base_station)
 
-    for i in range(1, nodes):
-        node = Node(i, (random.randint(0, 100), random.randint(0, 100)), protocol=protocol)
-        net.add_node(node)
-
-    for _ in range(links):
-        node1 = random.choice(net.nodes)
-        node2 = random.choice(net.nodes)
-        if node1 != node2:
-            net.add_link(node1.node_id, node2.node_id)
-
-    net.run_simulation(steps=steps, protocol=protocol)
+    if protocol.upper() == 'AODV':
+        net.run_aodv_simulation(steps)
+    elif protocol.upper() == 'DSR':
+        net.run_dsr_simulation(steps)
+    
     net.visualize()
 
 if __name__ == '__main__':

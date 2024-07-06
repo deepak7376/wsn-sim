@@ -15,7 +15,7 @@ pip install wsn-sim
 You can use the simulator by specifying options directly via the command line:
 
 ```bash
-wsn-sim --protocol AODV --steps 10 --nodes 20 --links 30
+wsn-sim --protocol AODV --steps 10 --nodes 20 --links 30 --topology random
 ```
 
 Alternatively, you can define these parameters in a `.cfg` file and provide the file path:
@@ -28,6 +28,7 @@ protocol = AODV
 steps = 10
 nodes = 20
 links = 30
+topology = random
 ```
 
 Then run:
@@ -43,6 +44,7 @@ wsn-sim --config config.cfg
 - `--steps`: Number of simulation steps
 - `--nodes`: Number of nodes in the network
 - `--links`: Number of random links between nodes
+- `--topology`: Network topology (grid/random/cluster)
 
 ## Running Tests
 
@@ -65,6 +67,7 @@ Here is an example of how to use the simulator:
     steps = 15
     nodes = 25
     links = 50
+    topology = random
     ```
 
 2. Run the simulation using the configuration file:
@@ -76,7 +79,7 @@ Here is an example of how to use the simulator:
 3. Alternatively, run the simulation with parameters directly from the command line:
 
     ```bash
-    wsn-sim --protocol DSR --steps 15 --nodes 25 --links 50
+    wsn-sim --protocol DSR --steps 15 --nodes 25 --links 50 --topology cluster
     ```
 
 ## License
@@ -87,4 +90,3 @@ This project is licensed under the MIT License.
 
 If you would like to contribute to this project, please fork the repository and submit a pull request. We welcome all improvements, including bug fixes, new features, and documentation enhancements.
 
----

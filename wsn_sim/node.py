@@ -1,4 +1,3 @@
-# wsn_sim/node.py
 import numpy as np
 import random
 
@@ -78,6 +77,11 @@ class Node:
         print(f"Node {self.node_id} sending RREP to Node {rreq['source']}")
         rrep = {'source': self.node_id, 'destination': rreq['source']}
         network.node_mapping[rreq['source']].routing_table[self.node_id] = self.node_id
+        network.send_rrep(network.node_mapping[rreq['source']], rrep)
+
+    def receive_rrep(self, network, rrep):
+        self.routing_table[rrep['source']] = rrep['destination']
+        print(f"Node {self.node_id} received RREP from Node {rrep['source']}")
 
     # DSR Protocol Methods
     def find_next_hop_dsr(self, network, destination):
@@ -105,10 +109,16 @@ class Node:
             self.send_route_reply(network, route_request)
         else:
             for neighbor in network.get_neighbors(self):
-                network.send_route_request(neighbor, route_request)
+                if neighbor.node_id not in route_request['path']:
+                    network.send_route_request(neighbor, route_request)
 
     def send_route_reply(self, network, route_request):
         print(f"Node {self.node_id} sending Route Reply to Node {route_request['source']}")
         route_reply = {'source': self.node_id, 'destination': route_request['source'], 'path': list(route_request['path'])}
         for node_id in route_reply['path']:
             network.node_mapping[node_id].route_cache[self.node_id] = list(route_reply['path'])
+        network.send_route_reply(network.node_mapping[route_request['source']], route_reply)
+
+    def receive_route_reply(self, network, route_reply):
+        self.route_cache[route_reply['destination']] = route_reply['path']
+        print(f"Node {self.node_id} received Route Reply from Node {route_reply['source']}")
