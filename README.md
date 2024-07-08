@@ -1,5 +1,8 @@
-# WSN-Simulator (WSN-Sim)
+[![Downloads](https://pepy.tech/badge/wsn-sim)](https://pepy.tech/project/wsn-sim)
+[![Downloads](https://pepy.tech/badge/wsn-sim/month)](https://pepy.tech/project/wsn-sim/month)
+[![Downloads](https://pepy.tech/badge/wsn-sim/week)](https://pepy.tech/project/wsn-sim/week)
 
+# WSN-Simulator
 **WSN-Sim** is a Python-based Wireless Sensor Network (WSN) simulator supporting AODV and DSR protocols.
 
 ## Installation
