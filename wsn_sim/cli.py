@@ -4,6 +4,8 @@ import click
 import configparser
 from wsn_sim.network import Network
 from wsn_sim.node import Node
+from wsn_sim.gui import NetworkGUI
+
 
 def read_config(file_path):
     config = configparser.ConfigParser()
@@ -26,9 +28,9 @@ def read_config(file_path):
 @click.option('--topology', type=str, default='cluster', help='Network topology (grid/random/cluster)')
 @click.option('--output', type=str, default='graph_visualization.png', help='Output filename for the graph image')
 @click.option('--gui', is_flag=True, help='Launch the GUI for the simulation')
-def run_simulation(config, protocol, steps, nodes, links, topology, output, gui=True):
-    if True:
-        Network().create_gui()
+def run_simulation(config, protocol, steps, nodes, links, topology, output, gui):
+    if gui:
+        NetworkGUI()  # Start the GUI
         return
 
     if config:
@@ -44,12 +46,19 @@ def run_simulation(config, protocol, steps, nodes, links, topology, output, gui=
     base_station = Node(0, (50, 50), role='base_station')
     net.add_node(base_station)
 
+    def update_gui():
+        pass  # No GUI updates in CLI mode
+
     if protocol.upper() == 'AODV':
-        net.run_aodv_simulation(steps)
-    elif protocol.upper() == 'DSR':
-        net.run_dsr_simulation(steps)
+        net.run_aodv_simulation(steps, update_gui)
+    elif protocol.get().upper() == 'DSR':
+        net.run_dsr_simulation(steps, update_gui)
 
-    net.visualize(filename=output)  # Save the graph to the specified file
-
+    output_file = 'graph_visualization.png'
+    net.visualize(filename=output_file)
+    print(f"Simulation completed and graph saved as {output_file}.")
+    print("Data Transmissions:")
+    for log in net.data_transmissions:
+        print(log)
 if __name__ == '__main__':
     run_simulation()

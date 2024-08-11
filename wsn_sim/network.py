@@ -1,8 +1,5 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox
 import networkx as nx
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import random
 import numpy as np
 from .node import Node
@@ -12,6 +9,7 @@ class Network:
         self.nodes = []
         self.graph = nx.Graph()
         self.node_mapping = {}
+        self.data_transmissions = []
 
     def add_node(self, node):
         self.nodes.append(node)
@@ -67,23 +65,21 @@ class Network:
             node1, node2 = random.sample(self.nodes, 2)
             self.add_link(node1.node_id, node2.node_id)
 
-    def run_aodv_simulation(self, steps):
+    def run_aodv_simulation(self, steps, gui_update_callback):
         for step in range(steps):
-            print(f"Simulation step {step + 1}")
             for node in self.nodes:
-                if node.role == 'sensor' and node.energy > 0:
-                    data = f"Temperature: {random.uniform(15, 35):.2f}C"
-                    node.queue_data({'destination': self.get_base_station(), 'content': data})
                 node.process_data_queue(self)
+            self.data_transmissions.append(f"Step {step + 1}: Data Transmissions")
+            print(f"Step {step + 1}: Data Transmissions")
+            gui_update_callback()  # Call the GUI update function
 
-    def run_dsr_simulation(self, steps):
+    def run_dsr_simulation(self, steps, gui_update_callback):
         for step in range(steps):
-            print(f"Simulation step {step + 1}")
             for node in self.nodes:
-                if node.role == 'sensor' and node.energy > 0:
-                    data = f"Temperature: {random.uniform(15, 35):.2f}C"
-                    node.queue_data({'destination': self.get_base_station(), 'content': data})
                 node.process_data_queue(self)
+            self.data_transmissions.append(f"Step {step + 1}: Data Transmissions")
+            print(f"Step {step + 1}: Data Transmissions")
+            gui_update_callback()  # Call the GUI update function
 
     def get_base_station(self):
         return next(node for node in self.nodes if node.role == 'base_station')
@@ -124,78 +120,13 @@ class Network:
             plt.close()
         print(f"Graph saved to {filename}")
 
-    def create_gui(self):
-        root = tk.Tk()
-        root.title("Wireless Sensor Network Simulator")
+    def update_gui(self, ax, canvas):
+        pos = nx.get_node_attributes(self.graph, 'pos')
+        energy_levels = [node.energy for node in self.nodes]
 
-        def run_simulation():
-            protocol = protocol_var.get()
-            steps = int(steps_entry.get())
-            nodes = int(nodes_entry.get())
-            links = int(links_entry.get())
-            topology = topology_var.get()
-            output = output_entry.get()
-
-            net = Network()
-            net.generate_topology(topology, nodes, links)
-            base_station = Node(0, (50, 50), role='base_station')
-            net.add_node(base_station)
-
-            if protocol.upper() == 'AODV':
-                net.run_aodv_simulation(steps)
-            elif protocol.upper() == 'DSR':
-                net.run_dsr_simulation(steps)
-
-            net.visualize(filename=output, display=False)  # Save the graph to the specified file
-            messagebox.showinfo("Info", f"Simulation completed and graph saved to {output}")
-
-        def upload_config():
-            filepath = filedialog.askopenfilename(filetypes=[("Config Files", "*.json")])
-            if filepath:
-                # Read and display the config file
-                with open(filepath, 'r') as file:
-                    config = file.read()
-                config_text.delete(1.0, tk.END)
-                config_text.insert(tk.END, config)
-
-        # Frame for input fields
-        frame = tk.Frame(root)
-        frame.pack(pady=10, padx=10, fill=tk.X)
-
-        tk.Label(frame, text="Protocol (AODV/DSR):").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
-        protocol_var = tk.StringVar(value='AODV')
-        tk.Entry(frame, textvariable=protocol_var).grid(row=0, column=1, padx=5, pady=5)
-
-        tk.Label(frame, text="Steps:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
-        steps_entry = tk.Entry(frame)
-        steps_entry.grid(row=1, column=1, padx=5, pady=5)
-        steps_entry.insert(tk.END, '10')
-
-        tk.Label(frame, text="Number of Nodes:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-        nodes_entry = tk.Entry(frame)
-        nodes_entry.grid(row=2, column=1, padx=5, pady=5)
-        nodes_entry.insert(tk.END, '20')
-
-        tk.Label(frame, text="Number of Links:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        links_entry = tk.Entry(frame)
-        links_entry.grid(row=3, column=1, padx=5, pady=5)
-        links_entry.insert(tk.END, '30')
-
-        tk.Label(frame, text="Topology (grid/random/cluster):").grid(row=4, column=0, sticky=tk.W, padx=5, pady=5)
-        topology_var = tk.StringVar(value='random')
-        tk.Entry(frame, textvariable=topology_var).grid(row=4, column=1, padx=5, pady=5)
-
-        tk.Label(frame, text="Output Filename:").grid(row=5, column=0, sticky=tk.W, padx=5, pady=5)
-        output_entry = tk.Entry(frame)
-        output_entry.grid(row=5, column=1, padx=5, pady=5)
-        output_entry.insert(tk.END, 'graph_visualization.png')
-
-        tk.Button(frame, text="Run Simulation", command=run_simulation).grid(row=6, column=0, columnspan=2, pady=10)
-
-        tk.Button(frame, text="Upload Config", command=upload_config).grid(row=7, column=0, columnspan=2, pady=10)
-
-        tk.Label(frame, text="Config File Content:").grid(row=8, column=0, sticky=tk.W, padx=5, pady=5)
-        config_text = tk.Text(frame, height=10, width=50)
-        config_text.grid(row=9, column=0, columnspan=2, padx=5, pady=5)
-
-        root.mainloop()
+        ax.clear()
+        if len(energy_levels) == len(self.graph.nodes):
+            nx.draw(self.graph, pos, ax=ax, with_labels=True, node_color='skyblue', node_size=[e * 10 for e in energy_levels])
+        else:
+            nx.draw(self.graph, pos, ax=ax, with_labels=True, node_color='skyblue', node_size=100)
+        canvas.draw()
